@@ -1,0 +1,1 @@
+in formatArticleData, index.js can i just use toLowerCase() or shall i reference it properly
