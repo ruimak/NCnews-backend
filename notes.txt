@@ -1,1 +1,1 @@
-in formatArticleData, index.js can i just use toLowerCase() or shall i reference it properly
+in the patch, incOrDecArtVotes in articles controllers, should it return 200 or 201 ? should i use save or update? am i changing an entry or adding an extra one to the collection?
