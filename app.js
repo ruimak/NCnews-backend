@@ -5,10 +5,14 @@ const bodyParser = require("body-parser");
 const apiRouter = require("./routes/api");
 const { DB_URL } = require("./config/config"); //"mongodb://localhost:27017/nc_news";
 
-mongoose.connect(
-  DB_URL,
-  { useNewUrlParser: true }
-);
+mongoose
+  .connect(
+    DB_URL,
+    { useNewUrlParser: true }
+  )
+  .then(() => {
+    console.log(`connected to ${DB_URL}`);
+  });
 
 app.use(bodyParser.json());
 app.use("/api", apiRouter);

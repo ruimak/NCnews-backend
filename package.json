@@ -6,7 +6,8 @@
   "scripts": {
     "test": "NODE_ENV=test mocha ./spec/app.spec.js --exit",
     "start": "node listen.js",
-    "dev": "nodemon listen.js"
+    "dev": "nodemon listen.js",
+    "seed:production": "NODE_ENV=production && node ./seed/seed.js"
   },
   "author": "",
   "license": "ISC",

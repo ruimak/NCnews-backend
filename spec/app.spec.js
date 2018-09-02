@@ -160,8 +160,8 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
     });
   });
 
-  describe.only("/api/articles/:article_id?vote=up", () => {
-    it.only("PATCH method returns status 200 and an updated article, votes up", () => {
+  describe("/api/articles/:article_id?vote=up", () => {
+    it("PATCH method returns status 200 and an updated article, votes up", () => {
       return request
         .patch(`/api/articles/${articleTestData[0]._id}?vote=up`)
         .expect(200)
@@ -190,9 +190,7 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .patch(`/api/articles/${articleTestData[0]._id}?vote=down`)
         .expect(200)
         .then(res => {
-          expect(res.body.updatedArticle.votes).to.equal(
-            articleTestData[0].votes - 1
-          );
+          expect(res.body.article.votes).to.equal(articleTestData[0].votes - 1);
         });
     });
     it("PATCH returns 400 when searching for an invalid mongo ID, vote down", () => {

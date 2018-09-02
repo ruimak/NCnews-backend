@@ -127,15 +127,15 @@ const IncOrDecArtVotes = (req, res, next) => {
   //     })
 
   if (req.query.vote === "up") {
-    console.log(req.params.article_id);
-    console.log(req.params.article_id);
+    // console.log(req.params.article_id);
+    // console.log(req.params.article_id);
     Article.findByIdAndUpdate(
       req.params.article_id,
       { $inc: { votes: 1 } },
       { new: true }
     )
       .then(article => {
-        console.log(article);
+        // console.log(article);
         if (!article) {
           return Promise.reject({
             status: 404,
@@ -147,13 +147,17 @@ const IncOrDecArtVotes = (req, res, next) => {
         }
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
         if (err.name === "CastError") {
           next({ status: 400, msg: "Bad request, invalid Mongo ID." });
         } else next(err);
       });
   } else if (req.query.vote === "down") {
-    Article.findOneAndUpdate({ _id: req.params.article_id }, { votes: votes++ })
+    Article.findByIdAndUpdate(
+      req.params.article_id,
+      { $inc: { votes: -1 } },
+      { new: true }
+    )
       .then(article => {
         if (!article) {
           return Promise.reject({
@@ -162,11 +166,11 @@ const IncOrDecArtVotes = (req, res, next) => {
           });
         } else {
           // console.log(article);
-          res.status(200).send({ updatedArticle });
+          res.status(200).send({ article });
         }
       })
       .catch(err => {
-        //  console.log(err);
+        // console.log(err);
         if (err.name === "CastError") {
           next({ status: 400, msg: "Bad request, invalid Mongo ID." });
         } else next(err);
