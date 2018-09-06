@@ -7,7 +7,9 @@ const {
 } = require("../controllers/topics");
 
 topicsRouter.route("/").get(getTopics);
-topicsRouter.route("/:topic_slug/articles").get(getArticleforTopic);
-topicsRouter.route("/:topic_slug/articles").post(postArticleforTopic);
+topicsRouter
+  .route("/:topic_slug/articles")
+  .get(getArticleforTopic)
+  .post(postArticleforTopic);
 
 module.exports = topicsRouter;

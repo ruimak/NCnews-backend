@@ -1,9 +1,16 @@
-//const express = require("express");
 const mongoose = require("mongoose");
 const app = require("express")();
 const bodyParser = require("body-parser");
 const apiRouter = require("./routes/api");
-const { DB_URL } = require("./config/config"); //"mongodb://localhost:27017/nc_news";
+const { DB_URL } = process.env.NODE_ENV
+  ? process.env.NODE_ENV
+  : require("./config");
+const {
+  handleInvalidParams,
+  handleInvalidBodies,
+  handle500s,
+  handle404s
+} = require("./errors");
 
 mongoose
   .connect(
@@ -17,13 +24,15 @@ mongoose
 app.use(bodyParser.json());
 app.use("/api", apiRouter);
 
-// app.use((err, req, res, next) => {
-//   console.log(err);
-//   res.status(res.status).send({ message: err.message });
-// });
-app.use(({ msg, status }, req, res, next) => {
-  if (status) res.status(status).send({ status, msg });
-  else res.status(500).send({ msg: "Internal server error.", status: 500 });
+//invalid route
+app.use("/*", (req, res) => {
+  res.status(404).send("Page not found");
 });
+
+//error handling
+app.use(handle404s);
+app.use(handleInvalidParams);
+app.use(handleInvalidBodies);
+app.use(handle500s);
 
 module.exports = app;

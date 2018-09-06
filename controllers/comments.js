@@ -1,7 +1,9 @@
 const { Comments } = require("../models");
 
-const removeComment = (req, res, next) => {
-  Comments.findById(req.params.comment_id)
+const removeCommentById = (req, res, next) => {
+  Comments.findByIdAndRemove(req.params.comment_id)
+    .populate("created_by", "-_id name")
+    .populate("belongs_to", "-_id title")
     .then(comment => {
       if (!comment) {
         return Promise.reject({
@@ -9,37 +11,38 @@ const removeComment = (req, res, next) => {
           msg: "Comment not found"
         });
       } else {
-        return Promise.all([
-          Comments.remove({ _id: req.params.comment_id }),
-          comment
-        ]);
+        res.status(201).send({ comment });
       }
     })
-    .then(([removed, comment]) => {
-      return Promise.all([Comments.findById(req.params.comment_id), comment]);
-    })
-    .then(([isThereComment, comment]) => {
-      res.status(201).send({ comment });
-    })
+    .catch(next);
+};
 
-    //   Comments.remove({ id: req.params.comment_id })
-    //     .then(() => {
-    //       res
-    //         .status(200)
-    //         .send({
-    //           msg: `Successfully deleted the comment with the id: ${
-    //             req.params.comment_id
-    //           }`
-    //         });
-    //     })
-    .catch(err => {
-      //  console.log(err);
-      if (err.name === "CastError") {
-        next({ status: 400, msg: "Bad request, invalid Mongo ID." });
-      } else next(err);
-    });
+const IncOrDecCommentVote = (req, res, next) => {
+  Comments.findByIdAndUpdate(
+    req.params.comment_id,
+    {
+      $inc: {
+        votes: req.query.vote === "up" ? 1 : req.query.vote === "down" ? -1 : 0
+      }
+    },
+    { new: true }
+  )
+    .populate("created_by", "-_id name")
+    .populate("belongs_to", "-_id title")
+    .then(comment => {
+      if (!comment) {
+        return Promise.reject({
+          status: 404,
+          msg: "Invalid params: Comment not found."
+        });
+      } else {
+        res.status(200).send({ comment });
+      }
+    })
+    .catch(next);
 };
 
 module.exports = {
-  removeComment
+  removeCommentById,
+  IncOrDecCommentVote
 };
