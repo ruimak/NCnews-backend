@@ -17,7 +17,7 @@ apiRouter.use("/users", usersRouter);
 
 //invalid route
 apiRouter.use("/*", (req, res) => {
-  res.status(404).send("Page not found");
+  res.status(404).send({ msg: "Page not found" });
 });
 
 module.exports = apiRouter;

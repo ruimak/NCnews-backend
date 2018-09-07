@@ -30,15 +30,18 @@ supertest
 ##Configurations
 ##Running in dev mode
 
-```http
-DB_URL: "mongodb://localhost:27017/nc_news",
-PORT: 9090
-```
-
-##Running in test mode
+You need to add an index.js file in the config folder, with the following object inside to be able to run the app whether in dev or test mode:
 
 ```http
-DB_URL: "mongodb://localhost:27017/nc_news_test"
+const config = {
+  development: {
+    DB_URL: "mongodb://localhost:27017/nc_news",
+    PORT: 9090
+  },
+  test: {
+    DB_URL: "mongodb://localhost:27017/nc_news_test"
+  }
+}
 ```
 
 ##Running the test
@@ -54,14 +57,48 @@ The functionality tests all expect a specific status depending on the methor (eg
 
 ```http
 #Test example:
-test example
+This particular test checks if calling the GET method on endpoint /api/articles/:article_id returns a 200 status, and an article with every key and values associated with the keys.
+
+describe("/api/articles/:article_id", () => {
+ it("GET method returns status 200 and the proper data for an article by ID, has all 9 keys and one key value should match the expected'", () => {
+      return request
+        .get(`/api/articles/${articleTestDocs[0]._id}`)
+        .expect(200)
+        .then(res => {
+          expect(res.body.articleWithCommentCount.title).to.equal(
+            articleTestDocs[0].title
+          );
+          expect(res.body.articleWithCommentCount).to.have.all.keys(
+            "_id",
+            "votes",
+            "title",
+            "created_by",
+            "body",
+            "created_at",
+            "belongs_to",
+            "__v",
+            "comment_count"
+          );
+        });
+    });
+}
 ```
 
 In the error handling tests there was a comparison between the resulting status/message and the status/message for the error being tested
 
 ```http
 #Test example:
-test example
+In this particular test we called the GET method on the /api/articles/nonexistent_path path, and expect the return to be a 400 status and the message "Bad request", because "nonexistent_path" is not a valid mongoID therefore its rejected as a parameter.
+
+describe("/api/articles/:article_id", () => {
+  it("GET returns 400 when searching for an invalid mongo ID", () => {
+      return request
+        .get(`/api/articles/nonexistent_path`)
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).to.equal("Bad request");
+        });
+    });
 ```
 
 ##Running in Dev mode
@@ -142,3 +179,7 @@ GET /api/users/:username
 # e.g: `/api/users/mitch123`
 # Returns a JSON object with the profile data for the specified user.
 ```
+
+#Updates
+
+-A comment count function was added and that property should be in the article object upon calling the "GET /api/articles" or "GET /api/articles/:article_id"

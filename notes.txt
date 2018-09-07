@@ -1,15 +1,6 @@
-do i have to chain populates? ex retrieve comments in article controler
-
-how do i populate a field which is referenced by a topics "topic slug"
-
-dont understand this lie -> Also collection.remove is deprecated. Use deleteOne instead
-
-why and how to add "Comment count is missing from articles"
-
-
-"When testing a 200 endpoint make sure that every key the repsonse is supposed to have exists. You are checking title and body but none of the other required fields. ( Including commment count for articles)" -> expect(something).to.have.all.keys('key1', 'key2')
-also, should i test for the content of those keys? what if i dont know the exact content eg. mongoID
 
 in the postCommentForArticleId why cant i change every belongs_to to req.params.article_id
 
-is the invalid route in the app file needed ?
+should the patch method also retrieve a comment count entry?
+
+should i remove the to.have.all.keys thing from the non-200 request tests?

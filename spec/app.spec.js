@@ -39,23 +39,60 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         });
     });
   });
+  describe("/nonexistent_endpoint", () => {
+    it("GET returns 404 and expected message", () => {
+      return request
+        .get("/nonexistent_endpoint")
+        .expect(404)
+        .then(res => {
+          expect(res.body).to.eql({ msg: "Page not found" });
+        });
+    });
+  });
+  describe("/api/nonexistent_endpoint", () => {
+    it("GET returns 404 and expected message", () => {
+      return request
+        .get("/api/nonexistent_endpoint")
+        .expect(404)
+        .then(res => {
+          expect(res.body).to.eql({ msg: "Page not found" });
+        });
+    });
+  });
   describe("/api/topics", () => {
-    it("GET method returns status 200 and the proper data", () => {
+    it("GET method returns status 200, an array with 2 articles, and the articles have all the keys and the right info attached", () => {
       return request
         .get("/api/topics")
         .expect(200)
         .then(res => {
           expect(res.body.topics.length).to.equal(2);
+          expect(Object.keys(res.body.topics[0]).length).to.equal(4);
+          expect(res.body.topics[0]).to.have.all.keys(
+            "_id",
+            "title",
+            "slug",
+            "__v"
+          );
           expect(res.body.topics[1].title).to.equal("Cats");
         });
     });
   });
   describe("/api/topics/:topic_slug/articles", () => {
-    it("GET method returns status 200 and the proper data (for cats as the params, length is 2 and the 1st ones body is 'Well? Think about it.'", () => {
+    it("GET method returns status 200 and 2 articles, with all the keys with the right information attached to each key", () => {
       return request
         .get("/api/topics/cats/articles")
         .expect(200)
         .then(res => {
+          expect(res.body.articles[0]).to.have.all.keys(
+            "votes",
+            "_id",
+            "title",
+            "created_by",
+            "body",
+            "created_at",
+            "belongs_to",
+            "__v"
+          );
           expect(res.body.articles.length).to.equal(2);
           expect(res.body.articles[0].body).to.equal("Well? Think about it.");
         });
@@ -70,7 +107,7 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
     });
   });
   describe("/api/topics/:topic_slug/articles", () => {
-    it("POST method creates a new entry, with the proper body in it", () => {
+    it("POST method creates a new entry, with all the keys and the proper body in it", () => {
       return request
         .post("/api/topics/cats/articles")
         .send({
@@ -81,7 +118,16 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         })
         .expect(201)
         .then(res => {
-          expect(Object.keys(res.body.article).length).to.equal(8);
+          expect(res.body.article).to.have.all.keys(
+            "votes",
+            "_id",
+            "title",
+            "created_by",
+            "body",
+            "created_at",
+            "belongs_to",
+            "__v"
+          );
           expect(res.body.article.title).to.eql("new article");
         });
     });
@@ -135,12 +181,14 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
     });
   });
   describe("/api/articles/:article_id", () => {
-    it("GET method returns status 200 and the proper data for an article by ID, has 9 keys and one param should match the expected'", () => {
+    it("GET method returns status 200 and the proper data for an article by ID, has all 9 keys and one key value should match the expected'", () => {
       return request
         .get(`/api/articles/${articleTestDocs[0]._id}`)
         .expect(200)
         .then(res => {
-          expect(res.body.article.title).to.equal(articleTestDocs[0].title);
+          expect(res.body.articleWithCommentCount.title).to.equal(
+            articleTestDocs[0].title
+          );
           expect(res.body.articleWithCommentCount).to.have.all.keys(
             "_id",
             "votes",
@@ -178,6 +226,17 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .patch(`/api/articles/${articleTestDocs[0]._id}?vote=up`)
         .expect(200)
         .then(res => {
+          expect(res.body.article).to.have.all.keys(
+            "_id",
+            "votes",
+            "title",
+            "created_by",
+            "body",
+            "created_at",
+            "belongs_to",
+            "__v",
+            "comment_count"
+          );
           expect(res.body.article.votes).to.equal(articleTestDocs[0].votes + 1);
         });
     });
@@ -202,6 +261,17 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .patch(`/api/articles/${articleTestDocs[0]._id}?vote=down`)
         .expect(200)
         .then(res => {
+          expect(res.body.article).to.have.all.keys(
+            "_id",
+            "votes",
+            "title",
+            "created_by",
+            "body",
+            "created_at",
+            "belongs_to",
+            "__v",
+            "comment_count"
+          );
           expect(res.body.article.votes).to.equal(articleTestDocs[0].votes - 1);
         });
     });
@@ -224,13 +294,21 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
   });
 
   describe("/api/articles/:article_id/comments", () => {
-    it("GET returns status 200 and all the comments for an article by ID (2 total), and the 1st comment should have 7 keys and the expected body", () => {
+    it("GET returns status 200 and all the comments for an article by ID (2 total), and the 1st comment should have all the keys and the expected body", () => {
       return request
         .get(`/api/articles/${articleTestDocs[0]._id}/comments`)
         .expect(200)
         .then(res => {
+          expect(res.body.comments[0]).to.have.all.keys(
+            "votes",
+            "_id",
+            "body",
+            "belongs_to",
+            "created_by",
+            "created_at",
+            "__v"
+          );
           expect(res.body.comments[0].body).to.equal(commentsTestDocs[0].body);
-          expect(Object.keys(res.body.comments[0]).length).to.equal(7);
           expect(res.body.comments.length).to.equal(2);
         });
     });
@@ -252,7 +330,7 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
     });
   });
   describe("/api/articles/:article_id/comments", () => {
-    it("POST method returns 201, and an expected body", () => {
+    it("POST method returns 201, all the keys and expected body", () => {
       return request
         .post(`/api/articles/${articleTestDocs[0]._id}/comments`)
         .send({
@@ -261,7 +339,15 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         })
         .expect(201)
         .then(res => {
-          expect(Object.keys(res.body.comment).length).to.equal(7);
+          expect(res.body.comment).to.have.all.keys(
+            "votes",
+            "_id",
+            "body",
+            "belongs_to",
+            "created_by",
+            "created_at",
+            "__v"
+          );
           expect(res.body.comment.body).to.eql("Sport Lisboa e Benfica");
         });
     });
@@ -299,6 +385,15 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .delete(`/api/comments/${commentsTestDocs[0]._id}`)
         .expect(201)
         .then(res => {
+          expect(res.body.comment).to.have.all.keys(
+            "votes",
+            "_id",
+            "body",
+            "belongs_to",
+            "created_by",
+            "created_at",
+            "__v"
+          );
           expect(res.body.comment.body).to.equal(commentsTestDocs[0].body);
         });
     });
@@ -326,6 +421,15 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .patch(`/api/comments/${commentsTestDocs[0]._id}?vote=up`)
         .expect(200)
         .then(res => {
+          expect(res.body.comment).to.have.all.keys(
+            "votes",
+            "_id",
+            "body",
+            "belongs_to",
+            "created_by",
+            "created_at",
+            "__v"
+          );
           expect(res.body.comment.votes).to.equal(
             commentsTestDocs[0].votes + 1
           );
@@ -352,6 +456,15 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .patch(`/api/comments/${commentsTestDocs[0]._id}?vote=down`)
         .expect(200)
         .then(res => {
+          expect(res.body.comment).to.have.all.keys(
+            "votes",
+            "_id",
+            "body",
+            "belongs_to",
+            "created_by",
+            "created_at",
+            "__v"
+          );
           expect(res.body.comment.votes).to.equal(
             commentsTestDocs[0].votes - 1
           );
@@ -376,12 +489,18 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
   });
 
   describe("/api/users/:username", () => {
-    it("GET method returns status 200 and the proper data, length is 2 and the 1st ones body is 'Well? Think about it.'", () => {
+    it("GET method returns status 200 and an user with all the keys and the expected value for a key", () => {
       return request
         .get(`/api/users/${usersTestDocs[0].username}`)
         .expect(200)
         .then(res => {
-          expect(Object.keys(res.body.userInfo).length).to.equal(5);
+          expect(res.body.userInfo).to.have.all.keys(
+            "_id",
+            "username",
+            "name",
+            "avatar_url",
+            "__v"
+          );
           expect(res.body.userInfo.name).to.equal(usersTestDocs[0].name);
         });
     });

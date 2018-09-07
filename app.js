@@ -26,7 +26,7 @@ app.use("/api", apiRouter);
 
 //invalid route
 app.use("/*", (req, res) => {
-  res.status(404).send("Page not found");
+  res.status(404).send({ msg: "Page not found" });
 });
 
 //error handling
