@@ -19,4 +19,4 @@ mongoose
   .then(() => {
     return mongoose.disconnect();
   })
-  .catch(console.log);
+  .catch(next);
