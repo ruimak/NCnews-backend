@@ -1,9 +1,11 @@
 const express = require("express");
 const apiRouter = express.Router();
-const topicsRouter = require("./topics");
-const articlesRouter = require("./articles");
-const commentsRouter = require("./comments");
-const usersRouter = require("./users");
+const {
+  topicsRouter,
+  articlesRouter,
+  commentsRouter,
+  usersRouter
+} = require("./");
 
 //homepage
 apiRouter.get("/", (req, res) => {

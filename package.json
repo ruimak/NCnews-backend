@@ -5,11 +5,11 @@
   "main": "listen.js",
   "scripts": {
     "test": "mocha ./spec/app.spec.js --exit",
-    "start": "node listen.js",
-    "dev": " nodemon listen.js",
+    "start": "node main",
+    "dev": " nodemon main",
     "seed:dev": "node ./seed/seed.dev.js"
   },
-  "author": "",
+  "author": "Rui Mak",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
