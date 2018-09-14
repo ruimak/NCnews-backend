@@ -59,7 +59,7 @@ const postCommentforArticleId = (req, res, next) => {
       if (!article) {
         return Promise.reject({
           status: 404,
-          msg: "Comments not found"
+          msg: "Article not found"
         });
       } else {
         return Comments.create({ ...req.body, belongs_to }).then(comment => {
