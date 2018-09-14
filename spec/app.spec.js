@@ -119,7 +119,7 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
           body: "This is my new article content",
           created_by: `${articleTestDocs[0]._id}`
         })
-        .expect(201)
+        .expect(200)
         .then(res => {
           expect(res.body.article).to.have.all.keys(
             "votes",
@@ -380,7 +380,7 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .post(`/api/articles/5b8907a88c973b386d4b20af/comments`)
         .expect(404)
         .then(res => {
-          expect(res.body.msg).to.equal("Comments not found");
+          expect(res.body.msg).to.equal("Article not found");
         });
     });
     it("POST method sends 400 when body is not valid", () => {

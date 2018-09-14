@@ -24,8 +24,8 @@ exports.formatCommentData = (commentData, userDocs, articleDocs) => {
   });
 };
 
-exports.addCommentCount = (commentsDocs, articleId, article) => {
-  return commentsDocs
+exports.addCommentCount = (commentData, articleId, article) => {
+  return commentData
     .find({ belongs_to: articleId })
     .then(comments => {
       article.comment_count = comments.length;

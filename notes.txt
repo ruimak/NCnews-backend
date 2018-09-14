@@ -1,3 +1,3 @@
-in package.json, run seed:production im running the seed file. But that doesnt seed per se. why then?
-
 spec  doc line 97, test is not generic so if i change data it wont pass. But docs arent in the same order as res.body cause its a query, should i try to make it generic and how would i do it?
+
+the comment count isnt working properly for the function postArticleforTopic 

@@ -1,4 +1,5 @@
-const { Topic, Article } = require("../models");
+const { Topic, Article, Comments } = require("../models");
+const { addCommentCount } = require("../utils");
 
 const getTopics = (req, res, next) => {
   Topic.find()
@@ -30,9 +31,17 @@ const postArticleforTopic = (req, res, next) => {
           msg: "Invalid params: Topic not found."
         });
       } else {
-        return Article.create({ ...req.body, belongs_to }).then(article => {
-          res.status(201).send({ article });
-        });
+        return Article.create({ ...req.body, belongs_to })
+          .then(createdArticle => {
+            return addCommentCount(
+              Comments,
+              createdArticle._id,
+              createdArticle
+            );
+          })
+          .then(article => {
+            res.status(200).send({ article });
+          });
       }
     })
     .catch(next);
