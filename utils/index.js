@@ -28,10 +28,7 @@ exports.addCommentCount = (commentsDocs, articleId, article) => {
   return commentsDocs
     .find({ belongs_to: articleId })
     .then(comments => {
-      // console.log(articleId, "articleID");
-      // console.log(comments, "comments");
       article.comment_count = comments.length;
-      // console.log(article, "article");
       return article;
     })
     .catch(console.log);

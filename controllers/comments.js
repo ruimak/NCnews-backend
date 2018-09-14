@@ -11,7 +11,7 @@ const removeCommentById = (req, res, next) => {
           msg: "Comment not found"
         });
       } else {
-        res.status(201).send({ comment });
+        res.status(200).send({ comment });
       }
     })
     .catch(next);

@@ -10,6 +10,7 @@ apiRouter.get("/", (req, res) => {
   res.status(200).send({ msg: "API homepage" });
 });
 
+//routes for topics, articles, comments and users
 apiRouter.use("/topics", topicsRouter);
 apiRouter.use("/articles", articlesRouter);
 apiRouter.use("/comments", commentsRouter);

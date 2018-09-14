@@ -1,3 +1,4 @@
+process.env.NODE_ENV = "test";
 const app = require("../app");
 const { expect } = require("chai");
 const request = require("supertest")(app);
@@ -9,7 +10,6 @@ const {
   topicsData,
   usersData
 } = require("../seed/testData");
-process.env.NODE_ENV = "test";
 
 describe("Connecting to and clearing the DB after each test, then at the end disconnecting", () => {
   let articleTestDocs, commentsTestDocs, usersTestDocs, topicsTestDocs;
@@ -73,7 +73,7 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
             "slug",
             "__v"
           );
-          expect(res.body.topics[1].title).to.equal("Cats");
+          expect(res.body.topics[1].title).to.equal(topicsTestDocs[1].title);
         });
     });
   });
@@ -94,6 +94,9 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
             "__v"
           );
           expect(res.body.articles.length).to.equal(2);
+          const body = articleTestDocs.find(
+            article => article._id === res.body.articles[0]._id
+          );
           expect(res.body.articles[0].body).to.equal("Well? Think about it.");
         });
     });
@@ -111,7 +114,7 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
       return request
         .post("/api/topics/cats/articles")
         .send({
-          title: "new article",
+          title: "New article",
           votes: 0,
           body: "This is my new article content",
           created_by: `${articleTestDocs[0]._id}`
@@ -128,7 +131,10 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
             "belongs_to",
             "__v"
           );
-          expect(res.body.article.title).to.eql("new article");
+          expect(res.body.article.title).to.eql("New article");
+          expect(res.body.article.body).to.eql(
+            "This is my new article content"
+          );
         });
     });
     it("POST method sends 404 when cant find the params in the topic data", () => {
@@ -155,12 +161,14 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         })
         .expect(400)
         .then(res => {
-          expect(res.body.msg).to.equal("Bad request, body isnt valid");
+          expect(res.body.msg).to.equal(
+            "articles validation failed: body: Path `body` is required."
+          );
         });
     });
   });
   describe("/api/articles", () => {
-    it("GET method returns status 200 and the proper data", () => {
+    it("GET method returns status 200 and 4 articles with the the proper data", () => {
       return request
         .get("/api/articles")
         .expect(200)
@@ -207,7 +215,9 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .get(`/api/articles/nonexistent_path`)
         .expect(400)
         .then(res => {
-          expect(res.body.msg).to.equal("Bad request");
+          expect(res.body.msg).to.equal(
+            'Cast to ObjectId failed for value "nonexistent_path" at path "_id" for model "articles"'
+          );
         });
     });
     it("GET returns 404 when searching for a valid mongo ID that doesnt exist in the collection", () => {
@@ -234,8 +244,7 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
             "body",
             "created_at",
             "belongs_to",
-            "__v",
-            "comment_count"
+            "__v"
           );
           expect(res.body.article.votes).to.equal(articleTestDocs[0].votes + 1);
         });
@@ -245,7 +254,9 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .patch(`/api/articles/nonexistent_path?vote=up`)
         .expect(400)
         .then(res => {
-          expect(res.body.msg).to.equal("Bad request");
+          expect(res.body.msg).to.equal(
+            'Cast to ObjectId failed for value "nonexistent_path" at path "_id" for model "articles"'
+          );
         });
     });
     it("PATCH returns 404 when searching for an valid id but there is no such article, vote up", () => {
@@ -269,8 +280,7 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
             "body",
             "created_at",
             "belongs_to",
-            "__v",
-            "comment_count"
+            "__v"
           );
           expect(res.body.article.votes).to.equal(articleTestDocs[0].votes - 1);
         });
@@ -280,7 +290,9 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .patch(`/api/articles/nonexistent_path?vote=down`)
         .expect(400)
         .then(res => {
-          expect(res.body.msg).to.equal("Bad request");
+          expect(res.body.msg).to.equal(
+            'Cast to ObjectId failed for value "nonexistent_path" at path "_id" for model "articles"'
+          );
         });
     });
     it("PATCH returns 404 when searching for an valid id but there is no such article, vote down", () => {
@@ -317,7 +329,9 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .get(`/api/articles/nonexistent_path/comments`)
         .expect(400)
         .then(res => {
-          expect(res.body.msg).to.equal("Bad request");
+          expect(res.body.msg).to.equal(
+            'Cast to ObjectId failed for value "nonexistent_path" at path "belongs_to" for model "comments"'
+          );
         });
     });
     it("GET returns 404 when searching for a valid mongo ID that doesnt exist in the collection", () => {
@@ -356,7 +370,9 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .post(`/api/articles/nonexistent_path/comments`)
         .expect(400)
         .then(res => {
-          expect(res.body.msg).to.equal("Bad request");
+          expect(res.body.msg).to.equal(
+            'Cast to ObjectId failed for value "nonexistent_path" at path "_id" for model "articles"'
+          );
         });
     });
     it("POST returns 404 when searching for a valid mongo ID that doesnt exist", () => {
@@ -375,15 +391,17 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         })
         .expect(400)
         .then(res => {
-          expect(res.body.msg).to.equal("Bad request, body isnt valid");
+          expect(res.body.msg).to.equal(
+            "comments validation failed: created_by: Path `created_by` is required."
+          );
         });
     });
   });
   describe("/api/comments/:comment_id", () => {
-    it("DELETE should get rid of a comment, send back status 201 and the deleted content", () => {
+    it("DELETE should get rid of a comment, send back status 200 and the deleted content", () => {
       return request
         .delete(`/api/comments/${commentsTestDocs[0]._id}`)
-        .expect(201)
+        .expect(200)
         .then(res => {
           expect(res.body.comment).to.have.all.keys(
             "votes",
@@ -402,7 +420,9 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .delete("/api/comments/nonexistent_path")
         .expect(400)
         .then(res => {
-          expect(res.body.msg).to.equal("Bad request");
+          expect(res.body.msg).to.equal(
+            'Cast to ObjectId failed for value "nonexistent_path" at path "_id" for model "comments"'
+          );
         });
     });
     it("GET returns 404 when searching a valid mongo ID that isnt in the collection", () => {
@@ -440,7 +460,9 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .patch(`/api/comments/nonexistent_path?vote=up`)
         .expect(400)
         .then(res => {
-          expect(res.body.msg).to.equal("Bad request");
+          expect(res.body.msg).to.equal(
+            'Cast to ObjectId failed for value "nonexistent_path" at path "_id" for model "comments"'
+          );
         });
     });
     it("PATCH returns 404 when searching for an valid id but there is no such article, vote up", () => {
@@ -475,7 +497,9 @@ describe("Connecting to and clearing the DB after each test, then at the end dis
         .patch(`/api/comments/nonexistent_path?vote=down`)
         .expect(400)
         .then(res => {
-          expect(res.body.msg).to.equal("Bad request");
+          expect(res.body.msg).to.equal(
+            'Cast to ObjectId failed for value "nonexistent_path" at path "_id" for model "comments"'
+          );
         });
     });
     it("PATCH returns 404 when searching for an valid id but there is no such article, vote down", () => {

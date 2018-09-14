@@ -1,55 +1,133 @@
-## Northcoders News API
+##Project Title
 
-### Background
+Northcoders News
 
-We will be building the API which to use in the Northcoders News Sprint during the Front End block of the course.
+##Getting Started
 
-Our database will be MongoDB. Your Mongoose models have been created for you so that you can see what the data should look like.
-
-### Mongoose Documentation
-
-The below are some of the model methods that you can call on your models.
-
-* [find](http://mongoosejs.com/docs/api.html#model_Model.find)
-* [findOne](http://mongoosejs.com/docs/api.html#model_Model.findOne)
-* [findOneAndUpdate](http://mongoosejs.com/docs/api.html#model_Model.findOneAndUpdate)
-* [findOneAndRemove](http://mongoosejs.com/docs/api.html#model_Model.findOneAndRemove)
-* [findById](http://mongoosejs.com/docs/api.html#model_Model.findById)
-* [findByIdAndUpdate](http://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate)
-* [findByIdAndRemove](http://mongoosejs.com/docs/api.html#model_Model.findByIdAndRemove)
-* [update](http://mongoosejs.com/docs/api.html#model_Model.update)
-* [create](https://mongoosejs.com/docs/api.html#model_Model.create)
-* [remove](http://mongoosejs.com/docs/api.html#model_Model-remove)
-* [save](http://mongoosejs.com/docs/api.html#model_Model-save)
-* [count](http://mongoosejs.com/docs/api.html#model_Model.count)
-* [populate](https://mongoosejs.com/docs/api.html#model_Model.populate)
-
-### Step 1 - Seeding
-
-Data has been provided for both testing and development environments so you will need to write a seed function to seed your database. You should think about how you will write your seed file to use either test data or dev data depending on the environment that you're running in.
-
-1.  You will need to seed the topics and users, followed by the articles and comments. 
-
-* Each article should have a `belongs_to` property, referenced by a topic's `topic_slug`, and have a `created_by` property that references a user's mongo `_id`. 
-* Each comment should also have `created_by` property that references a user's mongo `_id` and should also have a `belongs_to` property that references the specific article's mongo `_id`.
-
-### Step 2 - Building and Testing
-
-1.  Build your Express App
-2.  Mount an API Router onto your app
-3.  Define the routes described below
-4.  Define controller functions for each of your routes (remember to use `.populate` for `created_by` and `belongs_to` fields that are mongo ids! This will be extremely useful when you are working on the front-end!)
-5.  Use proper project configuration from the offset, being sure to treat development and test differently.
-6.  Test each route as you go. Remember to test the happy and the unhappy paths! Make sure your error messages are helpful and your error status codes are chosen correctly. Remember to seed the test database using the seeding function and make the saved data available to use within your test suite.
-
-**HINT** Make sure to drop and reseed your test database with every test. This will make it much easier to keep track of your data throughout. In order for this to work, you are going to need to keep track of the MongoIDs your seeded docs have been given. In order to do this, you might want to consider what your seed file returns, and how you can use this in your tests.
-
-### Routes
-
-Your server should have the following end-points:
+To prepare your system for running the app locally, run this command in your local directory to install the dependencies:
 
 ```http
-GET /api 
+"npm install"
+```
+
+##Prerequisites
+
+Node.js
+MongoDB
+
+##Dependencies
+body-parser
+express
+mongoose
+
+##devDependencies
+chai
+mocha
+nodemon
+supertest
+
+##Configurations
+
+You need to create a config folder with an index.js file inside, and that file should have the following object in it to be able to run the app either in dev or test modes:
+
+```http
+const ENV = process.env.NODE_ENV || "development";
+
+const config = {
+  development: {
+    DB_URL: "mongodb://localhost:27017/nc_news",
+    PORT: 9090
+  },
+  test: {
+    DB_URL: "mongodb://localhost:27017/nc_news_test"
+  }
+};
+
+module.exports = config[ENV];
+```
+
+##Mongo Database
+
+In order to make requests and manage MongoDB data (and therefore run tests/ run app in dev) you need to run the following command in a terminal:
+
+```http
+#Running Mongod
+mongod
+```
+
+##Running the tests
+
+In order to run the tests, use the following script:
+
+```http
+#Testing script
+npm run test
+```
+
+The tests used in this project can be split into functionality and error handling tests.
+The functionality tests all expect a specific status depending on the methor (eg.: 201 for POST, 200 for GET), and also compare the expected outcome of the function with his actual return,
+
+```http
+#Test example:
+This particular test checks if calling the GET method on endpoint /api/articles/:article_id returns a 200 status, and an article with every key and values associated with the keys (in this particular example the title was tested for its content).
+
+describe("/api/articles/:article_id", () => {
+ it("GET method returns status 200 and the proper data for an article by ID, has all 9 keys and one key value should match the expected'", () => {
+      return request
+        .get(`/api/articles/${articleTestDocs[0]._id}`)
+        .expect(200)
+        .then(res => {
+          expect(res.body.articleWithCommentCount.title).to.equal(
+            articleTestDocs[0].title
+          );
+          expect(res.body.articleWithCommentCount).to.have.all.keys(
+            "_id",
+            "votes",
+            "title",
+            "created_by",
+            "body",
+            "created_at",
+            "belongs_to",
+            "__v",
+            "comment_count"
+          );
+        });
+    });
+}
+```
+
+In the error handling tests there was a comparison between the resulting status/message and the status/message for the error being tested
+
+```http
+#Test example:
+In this particular test we called the GET method on the /api/articles/nonexistent_path path, and expect the return to be a 400 status and the message "Bad request", because "nonexistent_path" is not a valid mongoID therefore its rejected as a parameter.
+
+describe("/api/articles/:article_id", () => {
+  it("GET returns 400 when searching for an invalid mongo ID", () => {
+      return request
+        .get(`/api/articles/nonexistent_path`)
+        .expect(400)
+        .then(res => {
+          expect(res.body.msg).to.equal("Bad request");
+        });
+    });
+```
+
+##Running in Dev mode
+
+In order to run the app in development mode, use the following script:
+
+```http
+#Testing script
+npm run dev
+```
+
+This will run the listen.js file, and then you can access the app in your browser, at http://localhost:9090/api
+
+##Endpoints
+
+```http
+GET /api
 # Serves an HTML page with documentation for all the available endpoints
 ```
 
@@ -114,14 +192,6 @@ GET /api/users/:username
 # Returns a JSON object with the profile data for the specified user.
 ```
 
-NOTE: When it comes to building your front end you'll find it extremely useful if your POST comment endpoint returns the new comment with the created_by property populated with the corresponding user object.
+#Updates
 
-### Step 3 - Hosting
-
-Once you are happy with your seed/dev file, prepare your project for production. You will need to seed the development data to mLab, and host the API on Heroku. If you've forgotten how to do this, you may want to look at this tutorial! https://www.sitepoint.com/deploy-rest-api-in-30-mins-mlab-heroku/
-
-### Step 4 - Preparing for your review and portfolio
-
-Finally, you should write a README for this project (and remove this one). The README should be broken down like this: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
-
-It should also include the link where your herokuapp is hosted.
+-A comment count function was added and that property (comment_count) should be in the article object on the "GET /api/articles" or "GET /api/articles/:article_id" endpoints

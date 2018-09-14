@@ -6,13 +6,14 @@ exports.handle404s = (err, req, res, next) => {
 
 exports.handleInvalidParams = (err, req, res, next) => {
   if (err.name === "CastError") {
-    res.status(400).send({ msg: "Bad request" });
+    console.log(err.message);
+    res.status(400).send({ msg: err.message });
   } else next(err);
 };
 
 exports.handleInvalidBodies = (err, req, res, next) => {
   if (err.name === "ValidationError") {
-    res.status(400).send({ msg: "Bad request, body isnt valid" });
+    res.status(400).send({ msg: err.message });
   } else next(err);
 };
 
