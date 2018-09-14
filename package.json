@@ -5,8 +5,8 @@
   "main": "listen.js",
   "scripts": {
     "test": "mocha ./spec/app.spec.js --exit",
-    "start": "node main",
-    "dev": " nodemon main",
+    "start": "node listen.js",
+    "dev": " nodemon listen.js",
     "seed:dev": "node ./seed/seed.dev.js"
   },
   "author": "Rui Mak",
