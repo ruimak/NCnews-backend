@@ -10,6 +10,7 @@ const {
   handle500s,
   handle404s
 } = require('./errors');
+const cors = require('cors');
 
 mongoose
   .connect(
