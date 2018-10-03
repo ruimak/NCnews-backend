@@ -1,6 +1,6 @@
-const app = require("./app");
+const app = require('./app');
 const { PORT } =
-  process.env.NODE_ENV === "production" ? process.env : require("./config");
+  process.env.NODE_ENV === 'production' ? process.env : require('./config');
 
 // app listening function
 app.listen(PORT, err => {

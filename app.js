@@ -1,15 +1,15 @@
-const mongoose = require("mongoose");
-const app = require("express")();
-const bodyParser = require("body-parser");
-const apiRouter = require("./routes/api");
+const mongoose = require('mongoose');
+const app = require('express')();
+const bodyParser = require('body-parser');
+const apiRouter = require('./routes/api');
 const { DB_URL } =
-  process.env.NODE_ENV === "production" ? process.env : require("./config");
+  process.env.NODE_ENV === 'production' ? process.env : require('./config');
 const {
   handleInvalidParams,
   handleInvalidBodies,
   handle500s,
   handle404s
-} = require("./errors");
+} = require('./errors');
 
 mongoose
   .connect(
@@ -19,13 +19,13 @@ mongoose
   .then(() => {
     console.log(`connected to ${DB_URL}`);
   });
-
+app.use(cors());
 app.use(bodyParser.json());
-app.use("/api", apiRouter);
+app.use('/api', apiRouter);
 
 //invalid route
-app.use("/*", (req, res) => {
-  res.status(404).send({ msg: "Page not found" });
+app.use('/*', (req, res) => {
+  res.status(404).send({ msg: 'Page not found' });
 });
 
 //error handling

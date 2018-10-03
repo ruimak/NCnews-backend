@@ -6,7 +6,6 @@ exports.handle404s = (err, req, res, next) => {
 
 exports.handleInvalidParams = (err, req, res, next) => {
   if (err.name === "CastError") {
-    console.log(err.message);
     res.status(400).send({ msg: err.message });
   } else next(err);
 };

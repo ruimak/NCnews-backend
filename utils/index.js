@@ -31,5 +31,4 @@ exports.addCommentCount = (commentData, articleId, article) => {
       article.comment_count = comments.length;
       return article;
     })
-    .catch(console.log);
 };
