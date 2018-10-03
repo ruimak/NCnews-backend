@@ -539,4 +539,21 @@ describe('Connecting to and clearing the DB after each test, then at the end dis
         });
     });
   });
+  describe('/api/users', () => {
+    it('GET method returns status 200 and all users', () => {
+      return request
+        .get(`/api/users`)
+        .expect(200)
+        .then(res => {
+          expect(res.body.users[0]).to.have.all.keys(
+            '_id',
+            'username',
+            'name',
+            'avatar_url',
+            '__v'
+          );
+          expect(res.body.users.length).to.equal(2);
+        });
+    });
+  });
 });
