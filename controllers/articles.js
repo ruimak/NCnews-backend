@@ -1,10 +1,10 @@
-const { Article, Comments } = require("../models");
-const { addCommentCount } = require("../utils");
+const { Article, Comments } = require('../models');
+const { addCommentCount } = require('../utils');
 
 const getArticles = (req, res, next) => {
   Article.find()
     .lean()
-    .populate("created_by", "-_id name")
+    .populate('created_by', '-_id name')
     .then(articles => {
       return Promise.all(
         articles.map(article => {
@@ -12,8 +12,8 @@ const getArticles = (req, res, next) => {
         })
       );
     })
-    .then(articlesWithCommentCount => {
-      res.status(200).send({ articlesWithCommentCount });
+    .then(articles => {
+      res.status(200).send({ articles });
     })
     .catch(next);
 };
@@ -21,12 +21,12 @@ const getArticles = (req, res, next) => {
 const getArticleById = (req, res, next) => {
   Article.findById(req.params.article_id)
     .lean()
-    .populate("created_by", "-_id name")
+    .populate('created_by', '-_id name')
     .then(article => {
       if (!article) {
         return Promise.reject({
           status: 404,
-          msg: "Invalid params: Article not found."
+          msg: 'Invalid params: Article not found.'
         });
       } else {
         return addCommentCount(Comments, req.params.article_id, article);
@@ -40,11 +40,11 @@ const getArticleById = (req, res, next) => {
 
 const getCommentsForArtId = (req, res, next) => {
   Comments.find({ belongs_to: req.params.article_id })
-    .populate("created_by", "-_id name")
-    .populate("belongs_to", "-_id title")
+    .populate('created_by', '-_id name')
+    .populate('belongs_to', '-_id title')
     .then(comments => {
       if (comments.length === 0) {
-        return Promise.reject({ status: 404, msg: "Comments not found" });
+        return Promise.reject({ status: 404, msg: 'Comments not found' });
       } else res.status(200).send({ comments });
     })
     .catch(next);
@@ -54,12 +54,12 @@ const postCommentforArticleId = (req, res, next) => {
   let belongs_to = req.params.article_id;
 
   Article.findOne({ _id: belongs_to })
-    .populate("created_by", "-_id name")
+    .populate('created_by', '-_id name')
     .then(article => {
       if (!article) {
         return Promise.reject({
           status: 404,
-          msg: "Article not found"
+          msg: 'Article not found'
         });
       } else {
         return Comments.create({ ...req.body, belongs_to }).then(comment => {
@@ -75,17 +75,17 @@ const IncOrDecArtVotes = (req, res, next) => {
     req.params.article_id,
     {
       $inc: {
-        votes: req.query.vote === "up" ? 1 : req.query.vote === "down" ? -1 : 0
+        votes: req.query.vote === 'up' ? 1 : req.query.vote === 'down' ? -1 : 0
       }
     },
     { new: true }
   )
-    .populate("created_by", "-_id name")
+    .populate('created_by', '-_id name')
     .then(article => {
       if (!article) {
         return Promise.reject({
           status: 404,
-          msg: "Invalid params: Article not found."
+          msg: 'Invalid params: Article not found.'
         });
       } else {
         res.status(200).send({ article });
