@@ -4,7 +4,7 @@ const { addCommentCount } = require('../utils');
 const getArticles = (req, res, next) => {
   Article.find()
     .lean()
-    .populate('created_by', '-_id name')
+    .populate('created_by', '-_id')
     .then(articles => {
       return Promise.all(
         articles.map(article => {
@@ -21,7 +21,7 @@ const getArticles = (req, res, next) => {
 const getArticleById = (req, res, next) => {
   Article.findById(req.params.article_id)
     .lean()
-    .populate('created_by', '-_id name')
+    .populate('created_by', '-_id')
     .then(article => {
       if (!article) {
         return Promise.reject({
