@@ -32,8 +32,8 @@ const getArticleById = (req, res, next) => {
         return addCommentCount(Comments, req.params.article_id, article);
       }
     })
-    .then(articleWithCommentCount => {
-      res.status(200).send({ articleWithCommentCount });
+    .then(article => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };

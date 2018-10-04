@@ -195,10 +195,8 @@ describe('Connecting to and clearing the DB after each test, then at the end dis
         .get(`/api/articles/${articleTestDocs[0]._id}`)
         .expect(200)
         .then(res => {
-          expect(res.body.articleWithCommentCount.title).to.equal(
-            articleTestDocs[0].title
-          );
-          expect(res.body.articleWithCommentCount).to.have.all.keys(
+          expect(res.body.article.title).to.equal(articleTestDocs[0].title);
+          expect(res.body.article).to.have.all.keys(
             '_id',
             'votes',
             'title',
