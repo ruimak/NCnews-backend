@@ -1,5 +1,5 @@
-const { Topic, Article, Comments } = require("../models");
-const { addCommentCount } = require("../utils");
+const { Topic, Article, Comments } = require('../models');
+const { addCommentCount } = require('../utils');
 
 const getTopics = (req, res, next) => {
   Topic.find()
@@ -11,11 +11,21 @@ const getTopics = (req, res, next) => {
 
 const getArticleforTopic = (req, res, next) => {
   Article.find({ belongs_to: req.params.topic_slug })
-    .populate("created_by", "-_id name")
+    .populate('created_by', '-_id name')
+    .lean()
+    .then(articles => {
+      return Promise.all(
+        articles.map(article => {
+          return addCommentCount(Comments, article._id, article);
+        })
+      );
+    })
     .then(articles => {
       if (articles.length === 0) {
-        return Promise.reject({ status: 404, msg: "not found" });
-      } else res.status(200).send({ articles });
+        return Promise.reject({ status: 404, msg: 'not found' });
+      } else {
+        res.status(200).send({ articles });
+      }
     })
     .catch(next);
 };
@@ -28,7 +38,7 @@ const postArticleforTopic = (req, res, next) => {
       if (!matchingArticle) {
         return Promise.reject({
           status: 404,
-          msg: "Invalid params: Topic not found."
+          msg: 'Invalid params: Topic not found.'
         });
       } else {
         return Article.create({ ...req.body, belongs_to })

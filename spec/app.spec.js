@@ -88,6 +88,7 @@ describe('Connecting to and clearing the DB after each test, then at the end dis
             '_id',
             'title',
             'created_by',
+            'comment_count',
             'body',
             'created_at',
             'belongs_to',
