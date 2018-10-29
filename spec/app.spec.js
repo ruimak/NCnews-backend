@@ -13,6 +13,7 @@ const {
 
 describe('Connecting to and clearing the DB after each test, then at the end disconnecting', () => {
   let articleTestDocs, commentsTestDocs, usersTestDocs, topicsTestDocs;
+
   beforeEach(() => {
     return seedDB(articleData, commentsData, topicsData, usersData).then(
       docs => {
@@ -66,10 +67,11 @@ describe('Connecting to and clearing the DB after each test, then at the end dis
         .expect(200)
         .then(res => {
           expect(res.body.topics.length).to.equal(2);
-          expect(Object.keys(res.body.topics[0]).length).to.equal(4);
+          expect(Object.keys(res.body.topics[0]).length).to.equal(5);
           expect(res.body.topics[0]).to.have.all.keys(
             '_id',
             'title',
+            'avatar',
             'slug',
             '__v'
           );

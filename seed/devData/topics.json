@@ -1,5 +1,42 @@
 [
-  { "title": "Coding", "slug": "coding" },
-  { "title": "Football", "slug": "football" },
-  { "title": "Cooking", "slug": "cooking" }
+  {
+    "title": "Coding",
+    "slug": "coding",
+    "avatar": "https://cdn.makeawebsitehub.com/wp-content/uploads/2016/02/learn-code-e1455713167295.jpg"
+  },
+  {
+    "title": "Football",
+    "slug": "football",
+    "avatar": "https://images-na.ssl-images-amazon.com/images/I/61F-Epj6A9L._SX355_.jpg"
+  },
+  {
+    "title": "Cooking",
+    "slug": "cooking",
+    "avatar": "https://www.chatelaine.com/wp-content/uploads/2017/08/one-pot-halibut-and-chorizo-soup-810x445.jpg"
+  },
+  {
+    "title": "Martial Arts",
+    "slug": "martialarts",
+    "avatar": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/GABRIEL_VELLA_vs_ROMINHO_51.jpg/1200px-GABRIEL_VELLA_vs_ROMINHO_51.jpg"
+  },
+  {
+    "title": "Videogames",
+    "slug": "videogames",
+    "avatar": "https://www.mobafire.com/images/avatars/teemo-classic.png"
+  },
+  {
+    "title": "Surf",
+    "slug": "surf",
+    "avatar": "https://cdn.cnn.com/cnnnext/dam/assets/130624174959-50-surf-spots-the-box.jpg"
+  },
+  {
+    "title": "Music",
+    "slug": "music",
+    "avatar": "https://multimedia.bbycastatic.ca/multimedia/products/500x500/105/10557/10557553.jpeg"
+  },
+  {
+    "title": "Random",
+    "slug": "random",
+    "avatar": "https://yt3.ggpht.com/a-/AN66SAyk49uNWUtt2mDTTxOdMNy5afiVHK3dFIvPVQ=s900-mo-c-c0xffffffff-rj-k-no"
+  }
 ]

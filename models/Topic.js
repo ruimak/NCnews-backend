@@ -11,6 +11,9 @@ const TopicSchema = new Schema({
     lowercase: true,
     required: true,
     unique: true
+  },
+  avatar: {
+    type: String
   }
 });
 

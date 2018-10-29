@@ -54,7 +54,7 @@ const postCommentforArticleId = (req, res, next) => {
   let belongs_to = req.params.article_id;
 
   Article.findOne({ _id: belongs_to })
-    .populate('created_by', '-_id name')
+    .populate('created_by', '-_id')
     .then(article => {
       if (!article) {
         return Promise.reject({

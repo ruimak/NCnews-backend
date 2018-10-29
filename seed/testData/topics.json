@@ -1,10 +1,12 @@
 [
-    {
-        "title": "Mitch",
-        "slug": "mitch"
-    },
-    {
-        "title": "Cats",
-        "slug": "cats"
-    }
+  {
+    "title": "Mitch",
+    "slug": "mitch",
+    "avatar": "mitch"
+  },
+  {
+    "title": "Cats",
+    "slug": "cats",
+    "avatar": "cats"
+  }
 ]
